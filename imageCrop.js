@@ -52,7 +52,7 @@
         },
         init: function() {
             var $__1 = this;
-            this.el.style.cssText = ("width:" + this.width + ";height:" + this.height + ";overflow:hidden;box-shadow:#ccc 0 0 2px 2px");
+            this.el.style.cssText = "width:" + this.width + ";height:" + this.height + ";overflow:hidden;";
             this.file.onchange = function(e) {
                 $__1.ok = false;
                 var file = $__1.file.files[0];
@@ -104,6 +104,8 @@
             };
         },
         reset: function() {
+			if (!this.ok)
+                return;
             this.according.x = this.according.y = this.according.rotate = 0;
             this.according.scale = 1;
             this.image.style.filter = "";
@@ -127,6 +129,8 @@
             this.setCss();
         },
         gray: function() {
+			if (!this.ok)
+                return;
             this.darkWhite = true;
             this.image.style.filter = "grayscale(100%)";
         },
@@ -147,7 +151,8 @@
             ctx.translate(this.according.x, this.according.y);
             ctx.rotate(deg, deg);
             ctx.scale(this.according.scale, this.according.scale);
-            if (this.output.imageType === "image/jpeg") {
+			var imageType=this.output.imageType||""
+            if (imageType === "image/jpeg") {
                 ctx.fillStyle = "#fff";
                 ctx.fillRect(0, 0, this.width, this.height);
             }
@@ -157,14 +162,14 @@
                 ImageCrop.darkAndWhite(canvas2, ctx2);
             }
             return new Promise(function(resolve) {
-                var name = (($__1.output.imagePrefix || "unkown") + "." + $__1.output.imageType.replace("image/", ""));
+                var name = (($__1.output.imagePrefix || "unkown") + "." + imageType.replace("image/", ""));
                 if ($__1.output.base64) {
-                    var data = canvas2.toDataURL($__1.output.imageType, $__1.quality);
+                    var data = canvas2.toDataURL(imageType, $__1.quality);
                     resolve({
                         size: ImageCrop.base64FileSize(data),
                         preview: data,
                         name: name,
-                        type: $__1.output.imageType
+                        type: imageType
                     });
                     data = null;
                 } else {
@@ -173,11 +178,13 @@
                             preview: URL.createObjectURL(blob),
                             name: name
                         }));
-                    }, $__1.output.imageType, $__1.quality);
+                    }, imageType, $__1.quality);
                 }
             });
         },
         download: function() {
+			if (!this.ok)
+                return;
             this.clip().then(function(rs) {
                 return ImageCrop.downloadFile(rs.name, rs.preview);
             });
