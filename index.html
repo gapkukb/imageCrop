@@ -1,55 +1,17 @@
 <html lang="zh-cn">
 <head>
     <meta charset="UTF-8"/>
-    <title>发现</title>
+    <title>成功</title>
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
     <style>
         * {
             margin: 0;
             padding: 0;
-        }
-
-        canvas {
-            background-color: #f5f5f5;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-
-
-<input type="file" id="file"/>
-<div class="content" id="container"></div>
-<div>
-    <button onclick="instance.reset()">重置</button>
-    <button onclick="instance.scale(0)">缩</button>
-    <button onclick="instance.scale(1)">放大</button>
-    <button onclick="instance.rotate(0)">左旋</button>
-    <button onclick="instance.rotate(1)">右旋</button>
-    <button onclick="instance.gray()">黑白</button>
-    <button onclick="instance.clip()">裁剪</button>
-    <button onclick="instance.download()">下载</button>
-    <buttonon onclick="instance.destroy()">销毁</button>
-</div>
-
-<div id="test">
-
-</div>
-
-<script src="imageCrop.js"></script>
-<script>
-
-    const instance = new ImageCrop({
-        file: document.getElementById("file"),
-        el: document.getElementById("container"),
-        width: "50vw",
-        height: "50vw",
-        output: {
-            quality: 1,
-            imageType: "image/jpeg",
-            base64: true
-        }
-    })
-</script>
 </body>
 </html>

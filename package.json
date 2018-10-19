@@ -1,6 +1,6 @@
 {
   "name": "mini-imagecrop",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "mini-imagecrop is a super lightweight web image processing tool. You can easily pan, zoom, rotate, black and white, download, etc., as well as some helper functions. At the same time support AMD, CMD, COMMOMJS specifications. Rich parameter customization, basically meet the needs.",
   "main": "imageCrop.js",
   "scripts": {

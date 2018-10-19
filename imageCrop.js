@@ -9,234 +9,306 @@
         this[name] = definition()
     }
 })('ImageCrop', function () {
-    var ImageCrop = function ImageCrop(option) {
-        if (!option || !option.el || !option.file)
-            throw new Error("必传el&&file参数");
-        this.el = option.el;
-        this.file = option.file;
-        this.f = option.alert;
-        this.width = option.width || 300;
-        this.height = option.height || 300;
-        this.maxSize = option.maxSize * 1000 || 4096 * 1000;
-        this.scaleStep = option.scaleStep || 0.1;
-        this.rotateStep = option.rotateStep || 15;
-        this.fileNames = option.fileNames || ["image/gif", "image/png", "image/jpeg", "image/jpg", "image/svg"];
-        this.output = option.output || {};
-        this.quality = this.output.quality || 1;
-        this.file.accept = this.fileNames.join(",");
-        this.according = {
-            x: 0,
-            y: 0,
-            scale: 1,
-            rotate: 0
-        };
-        this.image = null;
-        this.canvas = null;
-        this.ok = false;
-        this.darkWhite = false;
-        this.init();
-    };
-    ImageCrop.prototype = {
-        constructor: "ImageCrop",
-        alert: function(msg) {
-            (this.f || window.alert)(msg);
-        },
-        events: window.navigator.userAgent.includes("Mobile") ? {
-            s: "ontouchstart",
-            m: "ontouchmove",
-            ed: "ontouchend"
-        } : {
-            s: "onmousedown",
-            m: "onmousemove",
-            ed: "onmouseup"
-        },
-        init: function() {
-            var $__1 = this;
-            this.el.style.cssText = "width:" + this.width + ";height:" + this.height + ";overflow:hidden;";
-            this.file.onchange = function(e) {
-                $__1.ok = false;
-                var file = $__1.file.files[0];
-                $__1.file.value = "";
-                if (file.size > $__1.maxSize)
-                    return $__1.alert("文件不得大于" + ($__1.maxSize) + "");
-                if (!$__1.fileNames.includes(file.type))
-                    return $__1.alert("不支持的文件格式");
-                if (!$__1.image) {
-                    $__1.image = new Image();
-                    $__1.image.draggable = false;
-                    $__1.image.style.transformOrigin = "left top";
-                    $__1.el.appendChild($__1.image);
-                    $__1.bindEvt();
+    let _isMobile = window.navigator.userAgent.includes("Mobile")
+    let _events = {
+        begin: _isMobile ? "ontouchstart" : "onmousedown",
+        move: _isMobile ? "ontouchmove" : "onmousemove",
+        end: _isMobile ? "ontouchend" : "onmouseup",
+    }
+    let _$ = string => document.querySelector(string)
+    let base64FileSize = base64 => {
+        const tag = "base64,"
+        base64 = base64.substring(base64.indexOf(tag) + tag.length)
+        const eq = base64.indexOf("=")
+        eq !== -1 && (base64 = base64.substring(0, eq))
+        const l = base64.length
+        return Math.ceil(l - (l / 8) * 2)
+    }
+
+    class ImageCrop {
+        constructor(cfg = {}) {
+            this.el = _$(cfg.el)
+            this.inputFile = _$(cfg.inputFile)
+            if (!this.el || !this.inputFile) {
+                throw Error("the el element or fileInput element not define")
+            }
+
+            this.previewBox = _$(cfg.preview) || document.createElement("input")
+            this.previewBox.type = "hidden"
+
+            this.isCircle = cfg.circle || false
+            this.alert = cfg.alert
+
+            this.width = this.el.offsetWidth
+            this.height = this.el.offsetHeight
+
+            this.entry = Object.assign({
+                fileTypes: ["jpeg", "png", "gif", "bmp", "svg", "webp"],
+                size: 5000 * 1024 * 1024, //b*1000 -> KB
+                width: "60%", //px vw vh % number
+                height: "60%", //px vh % vw number
+                minWidth: 60,//px
+                minHeight: 60,//px
+                keepRatio: true, //true ,false
+            }, cfg.entry)
+            this.entry.fileTypes = this.entry.fileTypes.map(v => "image/" + (v === "svg" ? "svg+xml" : v))
+            this.inputFile.accept = this.entry.fileTypes.join(",")
+
+            this.output = Object.assign({
+                fileType: "jpeg",
+                imagePrefix: "unkown",
+                width: 0,
+                blob: true,
+                quality: 1,
+            }, cfg.output)
+            this.keep = this.entry.keepRatio
+            this._circle = this.circle
+            this.tools = null
+            this.preview = null
+            this.image = null
+            this.copy = null
+            this.circle = null
+            this.svg = null
+            this.cf = this.previewBox.offsetWidth / this.width
+            this.ratio = 0
+            this.props = {x: 0, y: 0, w: 0, h: 0, ix: 0, iy: 0}
+            this.ok = false
+            this.bindFileChange()
+        }
+
+        getCroped() {
+            const scale1 = this.image.naturalWidth / this.width
+            const canvas = document.createElement("canvas")
+            const ctx = canvas.getContext("2d")
+            const {x, y, w, h, ix, iy} = this.props
+            const out = this.output
+            canvas.width = out.width || (w * scale1)
+            canvas.height = (h / w * out.width) || (h * scale1)
+            ctx.fillStyle = "#fff"
+            if (out.fileType === "jpeg") {
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+            }
+            if (this.isCircle) {
+                ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, 0, Math.PI * 2)
+                ctx.clip()
+            }
+            ctx.drawImage(this.image, (x - ix) * scale1, (y - iy) * scale1, w * scale1, h * scale1, 0, 0, canvas.width, canvas.height)
+            return new Promise(rs => {
+                const fileType = "image/" + out.fileType
+                const name = out.imagePrefix + "." + fileType.replace("image/", "")
+                if (out.blob) {
+                    canvas.toBlob(blob => rs(Object.assign(blob, {
+                        url: URL.createObjectURL(blob),
+                        name: name
+                    })), fileType, out.quality)
                 } else {
-                    $__1.reset();
-                }
-                var url = window.URL.createObjectURL(file);
-                $__1.image.src = url;
-                $__1.image.onload = function(e) {
-                    window.URL.revokeObjectURL(url);
-                    $__1.ok = true;
-                    $__1.image.removeAttribute("width");
-                    $__1.image.removeAttribute("height");
-                    $__1.image.width < $__1.image.height ? $__1.image.height = $__1.el.offsetHeight : $__1.image.width = $__1.el.offsetWidth;
-                };
-            };
-        },
-        bindEvt: function() {
-            var $__1 = this;
-            var ac = this.according;
-            this.el[this.events.s] = function(e) {
-                e.preventDefault();
-                var x1 = e.pageX || e.touches[0].pageX;
-                var y1 = e.pageY || e.touches[0].pageY;
-                document[$__1.events.m] = function(e) {
-                    e.preventDefault();
-                    var x2 = e.pageX || e.touches[0].pageX;
-                    var y2 = e.pageY || e.touches[0].pageY;
-                    ac.x += x2 - x1;
-                    ac.y += y2 - y1;
-                    x1 = x2;
-                    y1 = y2;
-                    $__1.setCss();
-                };
-                document[$__1.events.ed] = function(e) {
-                    document[$__1.events.m] = document[$__1.events.ed] = null;
-                };
-            };
-        },
-        reset: function() {
-			if (!this.ok)
-                return;
-            this.according.x = this.according.y = this.according.rotate = 0;
-            this.according.scale = 1;
-            this.image.style.filter = "";
-            this.darkWhite = false;
-            this.setCss();
-        },
-        setCss: function() {
-            var ac = this.according;
-            this.image.style.transform = ("translate3d(" + ac.x + "px," + ac.y + "px,0px) scale(" + ac.scale + ") rotate(" + ac.rotate + "deg)");
-        },
-        scale: function(flag) {
-            if (!this.ok)
-                return;
-            this.according.scale += flag ? this.scaleStep : -this.scaleStep;
-            this.setCss();
-        },
-        rotate: function(flag) {
-            if (!this.ok)
-                return;
-            this.according.rotate = (this.according.rotate + (flag ? this.rotateStep : -this.rotateStep)) % 360;
-            this.setCss();
-        },
-        gray: function() {
-			if (!this.ok)
-                return;
-            this.darkWhite = true;
-            this.image.style.filter = "grayscale(100%)";
-        },
-        clip: function() {
-            var $__1 = this;
-            if (!this.ok)
-                return;
-            var canvas = document.createElement("canvas");
-            var canvas2 = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            var ctx2 = canvas2.getContext("2d");
-            canvas.width = this.el.offsetWidth;
-            canvas.height = this.el.offsetHeight;
-            var size = this.output.size || {};
-            canvas2.width = size.width || canvas.width;
-            canvas2.height = size.height || canvas.height;
-            var deg = Math.PI * this.according.rotate / 180;
-            ctx.translate(this.according.x, this.according.y);
-            ctx.rotate(deg, deg);
-            ctx.scale(this.according.scale, this.according.scale);
-			var imageType=this.output.imageType||""
-            if (imageType === "image/jpeg") {
-                ctx.fillStyle = "#fff";
-                ctx.fillRect(0, 0, this.width, this.height);
-            }
-            ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
-            ctx2.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, canvas2.width, canvas2.height);
-            if (this.darkWhite) {
-                ImageCrop.darkAndWhite(canvas2, ctx2);
-            }
-            return new Promise(function(resolve) {
-                var name = (($__1.output.imagePrefix || "unkown") + "." + imageType.replace("image/", ""));
-                if ($__1.output.base64) {
-                    var data = canvas2.toDataURL(imageType, $__1.quality);
-                    resolve({
-                        size: ImageCrop.base64FileSize(data),
-                        preview: data,
+                    let data = canvas.toDataURL(fileType, out.quality)
+                    rs({
+                        size: base64FileSize(data),
+                        url: data,
                         name: name,
-                        type: imageType
-                    });
-                    data = null;
-                } else {
-                    canvas2.toBlob(function(blob) {
-                        resolve(Object.assign(blob, {
-                            preview: URL.createObjectURL(blob),
-                            name: name
-                        }));
-                    }, imageType, $__1.quality);
+                        type: fileType
+                    })
+                    data = null
                 }
-            });
-        },
-        download: function() {
-			if (!this.ok)
-                return;
-            this.clip().then(function(rs) {
-                return ImageCrop.downloadFile(rs.name, rs.preview);
-            });
-        },
-        destroy: function() {
-            this.file.onchange = this.el[this.events.s] = null;
-            this.el.innerHTML = "";
-            this.image = null;
+            }).catch(e => console.error(e))
         }
-    };
-    ImageCrop.darkAndWhite = function(canv, ctx) {
-        var img_data = ctx.getImageData(0, 0, canv.width, canv.height);
-        for (var i = 0; i < img_data.data.length; i += 4) {
-            var myRed = img_data.data[i],
-                myGreen = img_data.data[i + 1],
-                myBlue = img_data.data[i + 2];
-            myGray = parseInt((myRed + myGreen + myBlue) / 3);
-            img_data.data[i] = myGray;
-            img_data.data[i + 1] = myGray;
-            img_data.data[i + 2] = myGray;
+
+        bindFileChange() {
+            this._createElements()
+            this.inputFile.onchange = e => {
+                this.ok = false
+                const file = this.inputFile.files[0]
+                this.inputFile.value = ""
+                if (file.size > this.entry.size) {
+                    return (this.alert || window.alert)("文件不得大于" + Math.ceil(this.entry.size / 1000) + "KB")
+                } else if (!this.entry.fileTypes.includes(file.type)) {
+                    return (this.alert || window.alert)("不支持的文件格式")
+                }
+                this.update(window.URL.createObjectURL(file))
+            }
         }
-        ctx.putImageData(img_data, 0, 0);
-    };
-    ImageCrop.base64ToBlob = function(dataurl) {
-        var arr = dataurl.split(','),
-            mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]),
-            n = bstr.length,
-            u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
+
+        adjustDms(e) {
+            e = e || window.event
+            e.stopPropagation()
+            e.preventDefault()
+            const x1 = e.pageX || e.touches[0].pageX
+            const y1 = e.pageY || e.touches[0].pageY
+            const isMove = e.target.nodeName.toLowerCase() !== "svg"
+            let {x, y, w, h} = this.props
+            document[_events.move] = e => {
+                e = e || window.event
+                e.preventDefault()
+                let x2 = (e.pageX || e.touches[0].pageX) - x1
+                let y2 = (e.pageY || e.touches[0].pageY) - y1
+                if (isMove) {
+                    x = this.props.x + x2
+                    y = this.props.y + y2
+                } else {
+                    if (this.entry.keepRatio) {
+                        const d = Math.max(x2, y2)
+                        let tw = this.props.w + d * (x2 > y2 ? 1 : this.ratio)
+                        let th = this.props.h + d / (x2 > y2 ? this.ratio : 1)
+                        if (tw > this.width || th > this.height || tw < this.entry.minWidth || th < this.entry.minHeight) {
+                            return
+                        }
+                        w = tw
+                        h = th
+                    } else {
+                        w = this.props.w + x2
+                        h = this.props.h + y2
+                        w = w > this.width ? this.width : w < this.entry.minWidth ? this.entry.minWidth : w
+                        h = h > this.height ? this.height : h < this.entry.minHeight ? this.entry.minHeight : h
+                    }
+                    this.tools.style.width = w + "px"
+                    this.tools.style.height = h + "px"
+                    x = this.props.x - (w - this.props.w) / 2
+                    y = this.props.y - (h - this.props.h) / 2
+                }
+                x = x < 0 ? 0 : x > this.width - w ? this.width - w : x
+                y = y < 0 ? 0 : y > this.height - h ? this.height - h : y
+                this.tools.style.transform = `translate3d(${x}px,${y}px,0px)`
+            }
+            document[_events.end] = () => {
+                document[_events.move] = document[_events.end] = null
+                this.props.w = w
+                this.props.h = h
+                this.props.x = x
+                this.props.y = y
+                this.previewCb()
+            }
         }
-        return new Blob([u8arr], {type: mime});
-    };
-    ImageCrop.blobToDataURL = function(blob) {
-        var a = new FileReader();
-        return a.readAsDataURL(blob);
-    };
-    ImageCrop.downloadFile = function(fileName, url) {
-        var aLink = document.createElement('a');
-        aLink.download = fileName;
-        aLink.href = url;
-        aLink.click();
-        aLink = null;
-    };
-    ImageCrop.base64FileSize = function(base64) {
-        var tag = "base64,";
-        base64 = base64.substring(base64.indexOf(tag) + tag.length);
-        var eq = base64.indexOf("=");
-        eq !== -1 && (base64 = base64.substring(0, eq));
-        var l = base64.length;
-        return Math.ceil(l - (l / 8) * 2);
-    };
+
+        previewCb() {
+            let {x, y, w, h, scale, rotate} = this.props
+            const cf = this.cf
+            this.preview.style.width = `${w * cf}px`
+            this.preview.style.height = `${h * cf}px`
+            const sx = this.previewBox.offsetWidth / (w * cf)
+            const sy = this.previewBox.offsetHeight / (h * cf)
+            this.preview.style.transform = `scale(${ sx > sy ? sy : sx})`
+            this.copy.style.transform = `translate3d(${((this.width - this.image.width) / 2 - x) * cf}px,${((this.height - this.image.height) / 2 - y) * cf}px,0px)`
+        }
+
+        cropByCircle(flag) {
+            this.entry.keepRatio = flag || this.keep
+            this.isCircle = flag
+            this.preview.style.borderRadius = flag ? `50%` : ""
+            this._init()
+        }
+
+        _init() {
+            const image = this.image
+            const copy = this.copy
+            this.tools.style.width = this.entry.width
+            this.tools.style.height = this.entry.height
+
+            const d = this.isCircle ? Math.min(this.tools.offsetWidth, this.tools.offsetHeight) : 0
+            this.props.w = d || this.tools.offsetWidth
+            this.props.h = d || this.tools.offsetHeight
+            this.tools.style.width = this.props.w + "px"
+            this.tools.style.height = this.props.h + "px"
+
+            this.props.x = (this.width - this.props.w) / 2
+            this.props.y = (this.height - this.props.h) / 2
+            this.ratio = this.props.w / this.props.h
+            this.entry.minHeight = this.entry.minWidth / this.ratio
+
+            this.tools.style.transform = `translate3d(${this.props.x}px,${this.props.y}px,0px)`
+            this.circle.style.display = this.isCircle ? "block" : "none"
+
+            if (image.width >= image.height) {
+                image.width = this.width
+                copy.width = this.previewBox.offsetWidth
+                image.removeAttribute("height")
+                copy.removeAttribute("height")
+            } else {
+                image.height = this.height
+                copy.height = this.previewBox.offsetHeight
+                image.removeAttribute("width")
+                copy.removeAttribute("width")
+            }
+            this.props.ix = (this.width - image.width) / 2
+            this.props.iy = (this.height - image.height) / 2
+            image.style.transform = `translate3d(${this.props.ix}px,${this.props.iy}px,0px)`
+            this.previewCb()
+
+            this.svg[_events.begin] = this.tools[_events.begin] = this.adjustDms.bind(this)
+        }
+
+        reset() {
+            this.isCircle = this._circle
+            this._init()
+        }
+
+        destroy() {
+            this.svg[_events.begin] = this.tools[_events.begin] = this.inputFile.onchange = _isMobile = _events = _$ = base64FileSize = null
+        }
+
+        update(src) {
+            this.image.src = src
+            this.copy.src = src
+            this.image.onload = e => {
+                window.URL.revokeObjectURL(src)
+                this.ok = true
+                this._init()
+            }
+        }
+
+        _createElements() {
+            const div = this.tools = document.createElement("div")
+            const svg = this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+            const image = this.image = new Image()
+            const circle = this.circle = document.createElement("p")
+            const bs = `box-shadow:rgba(0,0,0,.6) 0 0 0 ${Math.max(this.width, this.height)}px`
+            this.el.style.cssText = `overflow: hidden;position: relative;background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC");`
+            div.title = "移动选取框"
+            div.style.cssText = `position: absolute;cursor: move;z-index: 2;left: 0;top: 0;${bs}`
+            circle.style.cssText = `position: absolute;left: 0;top: 0;bottom: 0;right: 0;border-radius: 50%;margin: 0; z-index: -1;${bs}`
+
+            svg.setAttribute("viewBox", "0 0 1025 1024")
+            svg.setAttribute("width", "30")
+            svg.setAttribute("height", "30")
+            svg.setAttribute("fill", "#fff")
+            svg.innerHTML = '<title>调整大小</title><path d="M324.8 444.8 442.752 325.632 252.032 131.968 381.12 1.152 3.328 1.152 3.328 384.256 134.272 251.392 324.8 444.8Z"></path><path d="M1024.222643 634.624 885.248 768.832 691.136 573.44 570.752 693.824 765.248 889.408 637.504 1022.808589 1024.222643 1022.808589 1024.222643 634.624Z"></path>'
+            this.svg.setAttribute("style", `background-color: rgba(0, 0, 0, .5);position: absolute;z-index: 3;right: 0;bottom: 0;cursor: nwse-resize;padding: 2px;border:1px solid #666;`)
+            this.previewBox.style.height = parseInt(getComputedStyle(this.previewBox, false).width) * this.height / this.width + "px"
+            this.preview = document.createElement("div")
+            this.preview.style.overflow = "hidden"
+            const copy = this.copy = image.cloneNode(true)
+            this.preview.appendChild(copy)
+            this.previewBox.appendChild(this.preview)
+            div.appendChild(svg)
+            div.appendChild(circle)
+            this.el.appendChild(image)
+            this.el.appendChild(div)
+        }
+
+        download() {
+            this.getCroped().then(rs => {
+                let aLink = document.createElement('a')
+                aLink.download = rs.name
+                aLink.href = rs.url
+                aLink.click()
+                aLink = null
+            })
+        }
+
+        static blobToBase64(blob) {
+            const a = new FileReader()
+            return a.readAsDataURL(blob)
+        };
+
+        static base64ToBlob(data) {
+            const arr = data.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length,
+                u8arr = new Uint8Array(n)
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n)
+            }
+            return new Blob([u8arr], {type: mime})
+        };
+    }
+
     return ImageCrop
 })
