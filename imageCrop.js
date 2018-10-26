@@ -1,6 +1,6 @@
 ;(function (name, definition) {
     var hasDefine = typeof define === 'function',
-        hasExports = typeof module !== 'undefined' && module.exports
+      hasExports = typeof module !== 'undefined' && module.exports
     if (hasDefine) {
         define(definition)
     } else if (hasExports) {
@@ -33,14 +33,15 @@
                 throw Error("the el element or fileInput element not define")
             }
 
-            this.previewBox = _$(cfg.preview) || document.createElement("input")
-            this.previewBox.type = "hidden"
+            this.preview = _$(cfg.preview) || document.createElement("input")
+            this.preview.type = "hidden"
 
             this.isCircle = cfg.circle || false
             this.alert = cfg.alert
 
-            this.width = this.el.offsetWidth
-            this.height = this.el.offsetHeight
+            let {width, height} = getComputedStyle(this.el, false)
+            this.width = parseInt(width)
+            this.height = parseInt(height)
 
             this.entry = Object.assign({
                 fileTypes: ["jpeg", "png", "gif", "bmp", "svg", "webp"],
@@ -64,12 +65,11 @@
             this.keep = this.entry.keepRatio
             this._circle = this.circle
             this.tools = null
-            this.preview = null
             this.image = null
             this.copy = null
             this.circle = null
             this.svg = null
-            this.cf = this.previewBox.offsetWidth / this.width
+            this.cf = parseInt(getComputedStyle(this.preview, false).width) / this.width
             this.ratio = 0
             this.props = {x: 0, y: 0, w: 0, h: 0, ix: 0, iy: 0}
             this.ok = false
@@ -181,14 +181,11 @@
         }
 
         previewCb() {
-            let {x, y, w, h, scale, rotate} = this.props
-            const cf = this.cf
-            this.preview.style.width = `${w * cf}px`
-            this.preview.style.height = `${h * cf}px`
-            const sx = this.previewBox.offsetWidth / (w * cf)
-            const sy = this.previewBox.offsetHeight / (h * cf)
-            this.preview.style.transform = `scale(${ sx > sy ? sy : sx})`
-            this.copy.style.transform = `translate3d(${((this.width - this.image.width) / 2 - x) * cf}px,${((this.height - this.image.height) / 2 - y) * cf}px,0px)`
+            let {x, y, w, h, ix, iy} = this.props
+            const cw = this.preview.offsetWidth / w, ch = this.preview.offsetHeight / h
+            this.copy.width = this.image.width * cw
+            this.copy.height = this.image.height * ch
+            this.copy.style.transform = `translate3d(${(ix - x) * cw}px,${(iy - y) * ch}px,0px)`
         }
 
         cropByCircle(flag) {
@@ -220,12 +217,12 @@
 
             if (image.width >= image.height) {
                 image.width = this.width
-                copy.width = this.previewBox.offsetWidth
+                copy.width = this.preview.offsetWidth
                 image.removeAttribute("height")
                 copy.removeAttribute("height")
             } else {
                 image.height = this.height
-                copy.height = this.previewBox.offsetHeight
+                copy.height = this.preview.offsetHeight
                 image.removeAttribute("width")
                 copy.removeAttribute("width")
             }
@@ -273,12 +270,11 @@
             svg.setAttribute("fill", "#fff")
             svg.innerHTML = '<title>调整大小</title><path d="M324.8 444.8 442.752 325.632 252.032 131.968 381.12 1.152 3.328 1.152 3.328 384.256 134.272 251.392 324.8 444.8Z"></path><path d="M1024.222643 634.624 885.248 768.832 691.136 573.44 570.752 693.824 765.248 889.408 637.504 1022.808589 1024.222643 1022.808589 1024.222643 634.624Z"></path>'
             this.svg.setAttribute("style", `background-color: rgba(0, 0, 0, .5);position: absolute;z-index: 3;right: 0;bottom: 0;cursor: nwse-resize;padding: 2px;border:1px solid #666;`)
-            this.previewBox.style.height = parseInt(getComputedStyle(this.previewBox, false).width) * this.height / this.width + "px"
-            this.preview = document.createElement("div")
+            this.preview.style.height = parseInt(getComputedStyle(this.preview, false).width) * this.height / this.width + "px"
             this.preview.style.overflow = "hidden"
+            // this.preview.style.overflow = "hidden"
             const copy = this.copy = image.cloneNode(true)
             this.preview.appendChild(copy)
-            this.previewBox.appendChild(this.preview)
             div.appendChild(svg)
             div.appendChild(circle)
             this.el.appendChild(image)
@@ -301,8 +297,9 @@
         };
 
         static base64ToBlob(data) {
-            const arr = data.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length,
-                u8arr = new Uint8Array(n)
+            const arr = data.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]),
+              u8arr = new Uint8Array(n)
+            let n = bstr.length
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n)
             }

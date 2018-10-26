@@ -1,17 +1,35 @@
 <html lang="zh-cn">
 <head>
-    <meta charset="UTF-8"/>
-    <title>成功</title>
-    <meta name="viewport"
-          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-    </style>
+	<meta charset="UTF-8"/>
+	<title>成功</title>
+	<meta name="viewport"
+		  content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body{padding: 50px}
+		div{width:300px;height:300px;}
+		.preview{
+			width:100px;
+			overflow:hidden;
+			background:#ccc;
+		}
+	</style>
 </head>
 <body>
+<div class="el"></div>
+<div class="preview"></div>
+<input class="file" type="file"/>
+<script src="js/imageCrop.js"></script>
+<script>
+    new ImageCrop({
+        el:".el",
+        inputFile:".file",
+        preview:".preview"
+    })
+</script>
 </body>
 </html>
