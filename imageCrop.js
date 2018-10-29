@@ -240,7 +240,7 @@
         }
 
         destroy() {
-            this.svg[_events.begin] = this.tools[_events.begin] = this.inputFile.onchange = _isMobile = _events = _$ = base64FileSize = null
+            this.svg[_events.begin] = this.tools[_events.begin] = this.inputFile.onchange = null
         }
 
         update(src) {
