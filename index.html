@@ -1,35 +1,85 @@
-<html lang="zh-cn">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-	<meta charset="UTF-8"/>
-	<title>成功</title>
-	<meta name="viewport"
-		  content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-		body{padding: 50px}
-		div{width:300px;height:300px;}
-		.preview{
-			width:100px;
-			overflow:hidden;
-			background:#ccc;
-		}
-	</style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width,height=device-height, user-scalable=no,initial-scale=1, minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
+    <title>约TA</title>
 </head>
+<style>
+    .view {
+        width: 300px;
+        height: 200px;
+    }
+
+    .preview {
+        width: 150px;
+    }
+
+    .view1 {
+        width: 300px;
+        height: 300px;
+    }
+
+    .preview1 {
+        width: 150px;
+    }
+
+    .box {
+        display: flex
+    }
+</style>
+
 <body>
-<div class="el"></div>
-<div class="preview"></div>
-<input class="file" type="file"/>
-<script src="js/imageCrop.js"></script>
-<script>
-    new ImageCrop({
-        el:".el",
-        inputFile:".file",
-        preview:".preview"
-    })
-</script>
+    <div class="box">
+        <div class="child">
+            <div class="view"></div>
+            <div class="preview"></div>
+            <input type="file" class="file">
+            <button onclick="crop.reset()">重置</button>
+            <button onclick="crop.cropped()">确认裁剪</button>
+            <button onclick="crop.download()">下载</button>
+            <button onclick="crop.clear()">销毁实例</button>
+            <input type="range" name="" id="" max="100" min="0" value="70" oninput="crop.scale(this.value)">
+        </div>
+        <div class="child">
+            <div class="view1"></div>
+            <div class="preview1"></div>
+            <input type="file" class="file1">
+            <button onclick="crop1.reset()">重置</button>
+            <button onclick="crop1.cropped()">确认裁剪</button>
+            <button onclick="crop1.download()">下载</button>
+            <button onclick="crop1.clear()">销毁实例</button>
+            <input type="range" name="" id="" max="100" min="0" value="70" oninput="crop1.scale(this.value)">
+        </div>
+    </div>
+
+    <script src="./dist/base.js"></script>
+    <script>
+        var crop = new Crop({
+            view: ".view",
+            file: '.file',
+            ext: "png",
+            keepPP: true,
+            outWidth: 100,
+            error:function(code) {
+                console.log(code)
+            }
+        })
+        crop.loadImage('https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp') 
+
+        var crop1 = new Crop({
+            view: ".view1",
+            file: '.file1',
+            ext: "png",
+            circle: true,
+            blob: true,
+            outWidth: 100,
+        })
+        crop1.loadImage('https://fengyuanchen.github.io/cropperjs/images/picture.jpg')
+    </script>
 </body>
+
 </html>

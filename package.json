@@ -1,22 +1,24 @@
 {
-  "name": "mini-imagecrop",
-  "version": "1.0.9",
-  "description": "mini-imagecrop is a super lightweight web image processing tool. You can easily pan, zoom, rotate, black and white, download, etc., as well as some helper functions. At the same time support AMD, CMD, COMMOMJS specifications. Rich parameter customization, basically meet the needs.",
-  "main": "imageCrop.js",
+  "name": "crop2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/base.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "rollup -cw",
+    "build": "rollup -c --environment NODE_ENV:prod"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gapkukb/imageCrop.git"
-  },
-  "keywords": [
-    "hkdcwkpn35"
-  ],
-  "author": "kinon",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/gapkukb/imageCrop/issues"
+  "devDependencies": {
+    "rollup": "^1.11.3",
+    "rollup-plugin-live-server": "^1.0.3",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-serve": "^1.0.1",
+    "rollup-plugin-typescript2": "^0.21.0",
+    "rollup-plugin-uglify": "^6.0.2"
   },
-  "homepage": "https://github.com/gapkukb/imageCrop#readme"
+  "dependencies": {
+    "typescript": "^3.4.5"
+  }
 }
