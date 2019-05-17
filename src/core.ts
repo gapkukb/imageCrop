@@ -1,5 +1,3 @@
-import { resolve } from "dns";
-
 declare var window: Window & { URL: any, webkitURL: any }
 const URL = window.URL || window.webkitURL
 const enum Ecode {

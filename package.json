@@ -1,13 +1,13 @@
 {
   "name": "mini-imagecrop",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "",
   "main": "dist/core.js",
   "scripts": {
     "dev": "rollup -cw",
     "build": "rollup -c --environment NODE_ENV:prod"
   },
-  "keywords": [],
+  "keywords": ["typescript","javascript","html5","canvas","image","crop","mini"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
