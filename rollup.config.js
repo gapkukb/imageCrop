@@ -8,7 +8,7 @@ const factory = file => ({
     input: 'src/' + file,
     output: {
         name: 'Crop',
-        file: 'dist/' + file.substring(0, file.lastIndexOf(".")) + (isProd ? '.min.' : '.') + 'js',
+        file: 'dist/' + file.substring(0, file.lastIndexOf("."))+ '.js',
         format: 'umd'
     },
     plugins,
@@ -17,6 +17,6 @@ const factory = file => ({
     }
 })
 export default [
-    factory('base.ts'),
-    factory('crop.preview.ts'),
+    factory('core.ts'),
+    factory('preview.ts'),
 ];

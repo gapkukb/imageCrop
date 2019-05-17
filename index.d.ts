@@ -1,5 +1,4 @@
-type TriggerEvent = 'move' | 'end';
-type props = Partial<{
+type Props = Partial<{
     w: number;
     h: number;
     l: number;
@@ -23,7 +22,7 @@ type Config = Partial<{
     name: string;
     blob: boolean;
     circle: boolean;
-    event: TriggerEvent;
+    isEnd: boolean;
     quality: number;
     ext:string
 }>;
@@ -39,15 +38,18 @@ interface Base {
     img: HTMLImageElement;
     dot: HTMLElement;
     type: string;
-    mp: props;
-    ip: props;
-    rp: props;
-    vw: number;
-    vh: number;
-    kp: number;
+    mp: Props; //mask props
+    ip: Props; //image props
+    rsp: Props; //restore props
+    vw: number; //view width
+    vh: number; //view height
+    kp: number; 
     pmt: number;
-    name?: string;
-    preImage?: HTMLImageElement;
+    pv?:HTMLElement //previvew
+    pi?: HTMLImageElement; //preview image
+    in?:HTMLElement //preview inner
+    pp?:Props; // preivew props
+    pc?:Function
 }
 interface OnErrorEventHandlerNonNull {
     (event: Event | string, source?: string, lineno?: number, colno?: number, error?: any): any;

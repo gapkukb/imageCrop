@@ -1,8 +1,8 @@
 {
-  "name": "crop2",
-  "version": "1.0.0",
+  "name": "mini-imagecrop",
+  "version": "2.0.0",
   "description": "",
-  "main": "dist/base.js",
+  "main": "dist/core.js",
   "scripts": {
     "dev": "rollup -cw",
     "build": "rollup -c --environment NODE_ENV:prod"

@@ -1,4 +1,4 @@
-import { lchown } from "fs";
+import { resolve } from "dns";
 
 declare var window: Window & { URL: any, webkitURL: any }
 const URL = window.URL || window.webkitURL
@@ -31,9 +31,7 @@ let _isEmpty = (
 let getValueWithBoundary = (c: number, min: number, max: number): number => {
     return Math.min(Math.max(c, min), max)
 }
-let $ = (seletor: string, parent?: HTMLElement): HTMLElement => {
-    return (parent || document).querySelector(seletor);
-}
+
 let reader = new FileReader()
 /**
  * @property view 最外层的盒子
@@ -57,36 +55,41 @@ export default class Crop implements Base {
     img: HTMLImageElement;
     dot: HTMLElement;
     type: string;
-    mp: props;
-    ip: props;
-    rp: props
+    mp: Props;
+    ip: Props;
+    rsp: Props
     vw: number;
     vh: number;
     kp: number;
     pmt: number;
-    t: any
     cfg: Config = {
         size: 1024 * 1024 * 5, //1M
         maskWidth: '60%',
         maskHeight: '60%',
-        minWidth: 100,
-        minHeight: 100,
+        minWidth: 40,
+        minHeight: 40,
         outWidth: 0,
         outHeight: 0,
         keepPP: true,
-        event: 'end',
+        isEnd: true,
         quality: 100,
         error: () => { }
     };
     constructor(config: Config) {
         this.cfg = { ...this.cfg, ...config };
-        this.view = $(config.view)!;
-        this.file = $(config.file) as HTMLInputElement;
-        this.init();
-    }
-    private init() {
+        this.view = this.$(config.view)!;
+        this.file = this.$(config.file) as HTMLInputElement;
         this.vw = this.view.offsetWidth;
         this.vh = this.view.offsetHeight;
+        this.init();
+    }
+    protected $(seletor: string, parent?: HTMLElement): HTMLElement {
+        return (parent || document).querySelector(seletor);
+    }
+    protected $c(element: string): HTMLElement {
+        return document.createElement(element)
+    }
+    private init() {
         if (this.cfg.circle) {
             this.cfg.keepPP = true;
         }
@@ -95,9 +98,9 @@ export default class Crop implements Base {
         this.mk[events.begin] = this.bindEvt.bind(this);
     }
     private render() {
-        this.mk = document.createElement('div');
+        this.mk = this.$c('div');
         this.view.style.cssText = `font-size:0;position:relative;overflow:hidden`;
-        this.img = new Image();
+        this.img = this.$c(`img`) as HTMLImageElement;
         this.img.draggable = false;
         this.img.crossOrigin = ``
         this.mk.style.cssText = `visibility:hidden;touch-action:none;position: absolute;width:${
@@ -106,9 +109,8 @@ export default class Crop implements Base {
             50}px`;
         this.view.appendChild(this.img);
         this.view.appendChild(this.mk);
-        this.mk.innerHTML += `<div style="box-sizing:border-box;border:1px dashed #39f;height:100%"></div><svg id="c_c" style="position: absolute;right:-10px;bottom: -12px;touch-action:none" width="30" height="30" xmlns="http://www.w3.org/2000/svg"><rect style="pointer-events:none" x="10" y = "10" width = "10" height = "10" fill = "#39f" /></svg></div>`
-        this.dot = $('svg', this.mk);
-
+        this.mk.innerHTML += `<div style="box-sizing:border-box;border:1px dashed #39f;height:100%"></div><svg id="c_c" style="position: absolute;right:-10px;bottom: -10px;touch-action:none" width="30" height="30" xmlns="http://www.w3.org/2000/svg"><rect style="pointer-events:none" x="10" y = "10" width = "10" height = "10" fill = "#39f" /></svg></div>`
+        this.dot = this.$('svg', this.mk);
     }
     private bindFileEvt() {
         if (this.file) {
@@ -160,8 +162,7 @@ export default class Crop implements Base {
             this.ip.t
             }px,0)`;
         this.moveDiv((this.vw - w) / 2, (this.vh - h) / 2)
-        this.rp = { ...this.mp }
-
+        this.rsp = { ...this.mp }
     }
     private bindEvt(e: Event): void {
         let x1: number, y1: number
@@ -178,10 +179,17 @@ export default class Crop implements Base {
                 this.moveDiv(this.mp.l = getValueWithBoundary(l + x2 - x1, 0, vw - w),
                     this.mp.t = getValueWithBoundary(t + y2 - y1, 0, vh - h)) :
                 this.resizeDiv(getValueWithBoundary(w + x2 - x1, this.cfg.minWidth, vw - l), getValueWithBoundary(h + y2 - y1, this.cfg.minHeight, vh - t));
+            !this.cfg.isEnd && this.pc()
         }
         document[events.end] = () => {
             document[events.move] = document[events.end] = null;
+            this.cfg.isEnd && this.pc()
         };
+    }
+    public pc() {
+    }
+
+    public loadpre() {
     }
 
     private resizeDiv(w: number, h: number) {
@@ -200,9 +208,9 @@ export default class Crop implements Base {
         this.mp.t = top
         this.mk.style.transform = `translate3d(${left}px,${top}px,0px)`;
     }
-    public cropped(): string | void {
+    public cropped(): string | Promise<Blob> | void {
         const cfg = this.cfg
-        let can: HTMLCanvasElement = document.createElement('canvas');
+        let can: HTMLCanvasElement = this.$c('canvas') as HTMLCanvasElement;
         let ctx: CanvasRenderingContext2D = can.getContext('2d');
         let { w, h, l, t } = this.mp;
         const outSize = Math.max(cfg.outWidth, cfg.outHeight);
@@ -226,24 +234,23 @@ export default class Crop implements Base {
         if (_isEmpty(can, ctx)) {
             return cfg.error(Ecode.emptyImage);
         }
-        let data = can.toDataURL(
-            `image/` + cfg.ext,
-            cfg.quality / 100,
-        );
-        can = ctx = null;
-        const img = new Image()
-        img.src = data
-        document.body.appendChild(img)
-        return data;
+        return this.export(can, cfg);
+    }
+    export(can: HTMLCanvasElement, cfg: Config): string | Promise<Blob> {
+        const e = `image/` + cfg.ext, q = cfg.quality / 100
+        if (cfg.blob) return new Promise(resolve => {
+            can.toBlob(blob => resolve(blob), e, q)
+        })
+        return can.toDataURL(e, q)
     }
     public reset() {
-        const { w, h, l, t } = this.rp
+        const { w, h, l, t } = this.rsp
         this.moveDiv(l, t)
         this.resizeDiv(w, h)
     }
     public clear() {
         URL['revokeObjectURL'](this.img.src)
-        clearTimeout(this.t)
+        this.img.removeEventListener('load', this.loadpre, false)
         this.file.onchange =
             this.mk[events.begin] =
             events =
