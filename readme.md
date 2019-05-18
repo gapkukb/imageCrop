@@ -18,6 +18,9 @@ demo 地址:http://ic.gogogoup.com/<br /><br />
 propetys:`除view属性是必填外，其他都为选填`<br><br>
 | Left-aligned | Center-aligned | Right-aligned |
 | :---         |     :---:      |          ---: |
+| git status   | git status     | git status    |
+| git diff     | git diff       | git diff      |
+<br>
 | 参数 | 说明 | 类型 | 默认值 |
 |:--------------------|:------------:|:---------:|-------------------:|
 | view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
