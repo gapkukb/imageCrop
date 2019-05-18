@@ -9,9 +9,9 @@ demo 地址:http://ic.gogogoup.com/<br /><br /><br />
 <br /><br />
 `注意:` dist 文件夹下的 core.js 不包含预览功能，如要要使用预览功能，请使用 preview.js
 <br /><br />
-|   |    |    |  |
-|:--------------------|:------------:|:---------:|:-------------------:|
+
 | options propety/参数 | explain/说明 | type/类型 | defualt value/默认值 |
+|:--------------------|:------------:|:---------:|:-------------------:|
 | view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
 | preview | 指定图片`预览`显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象，需自行设置元素宽度，`高度`会与 view 元素按比例自动计算 | string &#124; HTMLElement | none |
 | file | 指定 input file 元素，可以是类名或者 ID 或者元素对象 | string &#124; HTMLInputElement | none |
