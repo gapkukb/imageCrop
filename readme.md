@@ -22,24 +22,7 @@ propetys:`除view属性是必填外，其他都为选填`
 | git status   | git status     | git status    |
 | git diff     | git diff       | git diff      |
 <br>
-| 参数 | 说明 | 类型 | 默认值 |
-|:--------------------|:------------:|:---------:|-------------------:|
-| view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
-| preview | 指定图片`预览`显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象，需自行设置元素宽度，`高度`会与 view 元素按比例自动计算 | string &#124; HTMLElement | none |
-| file | 指定 input file 元素，可以是类名或者 ID 或者元素对象 | string &#124; HTMLInputElement | none |
-| error | 错误回调函数，返回参数 errCode,错误代号如下: 0 - 非图片文件类型， 1 - 文件过大 , 2 - 图片加载失败 ，3 -所选区域是空的(裁剪范围内不能全黑或全白) | function | none |
-| size | 指定选择图片的最大字节，单位 KB | number | 1024*1024*5 == 5M |
-| maskWidth | 指定选取框的初始宽度，可以是 px,%,vw,vh,vmax,vmin,pt 任意合法的 CSS 单位 | string | 60% |
-| maskHeight | 指定选取框的初始高度，可以是 px,%,vw,vh,vmax,vmin,pt 任意合法的 CSS 单位 | string | 60% |
-| minWidth | 指定选取框可调整的最小宽度，传入数字即可，会自行添加 px 单位 | number | 100 |
-| minHeight | 指定选取框可调整的最小高度，传入数字即可，会自行添加 px 单位 | number | 100 |
-| outmax | 导出图片的最大边长，对于横图它是宽度，对于竖图它是高度，默认根据裁剪区域的图片`真实尺度`输出 | number | 0 |
-| keepPP | 是否保持宽高比例调整 | number | 0 |
-| blob | 是否导出为 blob 对象,默认导出 base64,blob 对象性能优于 base64,但 IE 浏览器不支持 Blob 对象，请根据实际情况选择 | boolean | false |
-| circle | 是否使用圆形裁剪，使用圆形裁剪，会在 maskWidth,maskHeight 中取小的作为园直径 | boolean | false |
-| isEnd | 实时预览触发时机,true 表示在 touchend 和 mouseup 触发，false 表示在 touchmove 和 mousemove 触发 | boolean | false |
-| quality | 导出图片质量 ，范围 0 -100 , 仅在 type == jpeg 时有效 | number | 100 |
-| type | 导出图片格式 ，jpeg &#124; png | string | png |
+
 
 crop 实例方法：<br>
 loadImage(url) 如果需要支持在线图片裁剪，则直接调用该方法即可，需要注意的是可能会有跨域问题，请自行斟酌<br>
