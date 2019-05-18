@@ -5,26 +5,23 @@ type Props = Partial<{
     t: number;
 }>;
 type Config = Partial<{ 
-    view: string;
-    preview: string;
-    file: string;
+    view: string|HTMLElement;
+    preview: string | HTMLElement;
+    file: string | HTMLInputElement;
     error: (code: number) => void;
     size: number;
-    maskWidth: number | string;
-    maskHeight: number | string;
+    maskWidth: string;
+    maskHeight: string;
     minWidth: number;
     minHeight: number;
     outWidth: number;
     outHeight: number;
-    Height: number;
     keepPP: boolean;
-    type: string;
-    name: string;
     blob: boolean;
     circle: boolean;
     isEnd: boolean;
     quality: number;
-    ext:string
+    type:string
 }>;
 type GetImageSizeCallback = (width: number, height: number) => void;
 interface HTMLImageElement {

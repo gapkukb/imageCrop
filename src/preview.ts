@@ -6,7 +6,7 @@ export default class Crop extends Core {
     in: HTMLElement
     constructor(cfg: Config) {
         super(cfg)
-        this.pv = this.$(cfg.preview)
+        this.pv = typeof cfg.preview === 'string' ? this.$(cfg.preview) : cfg.preview
         this.rp()
     }
     private rp() {
@@ -31,6 +31,6 @@ export default class Crop extends Core {
         this.pi.style.transform = `translate3d(${this.ip.l - this.mp.l}px,${this.ip.t - this.mp.t}px,0)`
         this.in.style.width = this.mp.w + `px`
         this.in.style.height = this.mp.h + `px`
-        this.in.style.transform = `scale(${p}) translate3d(${(this.pp.w - this.mp.w) / 2/p}px,${(this.pp.h - this.mp.h) / 2/p}px,0)`
+        this.in.style.transform = `scale(${p}) translate3d(${(this.pp.w - this.mp.w) / 2 / p}px,${(this.pp.h - this.mp.h) / 2 / p}px,0)`
     }
 }

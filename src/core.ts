@@ -61,11 +61,11 @@ export default class Crop implements Base {
     kp: number;
     pmt: number;
     cfg: Config = {
-        size: 1024 * 1024 * 5, //1M
+        size: 1024 * 1024 * 5, //5M
         maskWidth: '60%',
         maskHeight: '60%',
-        minWidth: 40,
-        minHeight: 40,
+        minWidth: 100,
+        minHeight: 100,
         outWidth: 0,
         outHeight: 0,
         keepPP: true,
@@ -73,10 +73,10 @@ export default class Crop implements Base {
         quality: 100,
         error: () => { }
     };
-    constructor(config: Config) {
-        this.cfg = { ...this.cfg, ...config };
-        this.view = this.$(config.view)!;
-        this.file = this.$(config.file) as HTMLInputElement;
+    constructor(cfg: Config) {
+        this.cfg = { ...this.cfg, ...cfg };
+        this.view = typeof cfg.view === 'string' ? this.$(cfg.view) : cfg.view;
+        this.file = (typeof cfg.file === 'string' ? this.$(cfg.file) : cfg.file) as HTMLInputElement;
         this.vw = this.view.offsetWidth;
         this.vh = this.view.offsetHeight;
         this.init();
@@ -216,7 +216,7 @@ export default class Crop implements Base {
         can.width = outSize > 0 ? w * p : h / this.pmt;
         can.height = outSize > 0 ? h * p : h / this.pmt;
         let [cw, ch] = [can.width, can.height]
-        if (cfg.ext.indexOf('jpg') !== -1) {
+        if (cfg.type.indexOf('jpeg') !== -1) {
             ctx.fillStyle = `#fff`;
             ctx.fillRect(0, 0, cw, ch);
         }
@@ -235,7 +235,7 @@ export default class Crop implements Base {
         return this.export(can, cfg);
     }
     export(can: HTMLCanvasElement, cfg: Config): string | Promise<Blob> {
-        const e = `image/` + cfg.ext, q = cfg.quality / 100
+        const e = `image/` + cfg.type, q = cfg.quality / 100
         if (cfg.blob) return new Promise(resolve => {
             can.toBlob(blob => resolve(blob), e, q)
         })
