@@ -42,7 +42,7 @@ propetys:`除view属性是必填外，其他都为选填`
 | circle | 是否使用圆形裁剪，使用圆形裁剪，会在 maskWidth,maskHeight 中取小的作为园直径 | boolean | false |
 | isEnd | 实时预览触发时机,true 表示在 touchend 和 mouseup 触发，false 表示在 touchmove 和 mousemove 触发 | boolean | false |
 | quality | 导出图片质量 ，范围 0 -100 , 仅在 type == jpeg 时有效 | number | 100 |
-| type | 导出图片格式 ，jpeg &#124; png | string | png |
+| type | 导出图片格式 ，可选值：jpeg &#124; png | string | png |
 <br><br>
 ---
 
