@@ -1,4 +1,5 @@
-mini-imageCrop ============== 轻量级的HTML5图片裁剪插件 --------------
+#mini-imageCrop
+##轻量级的HTML5图片裁剪插件
 1.mini-imagecrop 是一款利用HTML5
 canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致。核心文件仅有5.18kb。GZIP压缩后不足1KB
 <br />
@@ -14,6 +15,8 @@ canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 用法： const crop = new Crop(options) . `除view属性是必填外，其他都为选填`
 <br />
 <br />
+|options propety/参数|explain/说明|type/类型|defualt value/默认值|
+|-----|:-------:|:----------:|
 <table border="1" cellspacing="0" width="100%" style="table-layout: fixed">
   <tbody align="center">
     <tr>
