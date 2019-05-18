@@ -17,6 +17,9 @@ canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 <br />
 |options propety/参数|explain/说明|type/类型|defualt value/默认值|
 |-----|:-------:|:----------:|
+| 表格      | 第一列     | 第二列     |
+| ---------- | :-----------:  | :-----------: |
+| 第一行     | 第一列     | 第二列     |
 <table border="1" cellspacing="0" width="100%" style="table-layout: fixed">
   <tbody align="center">
     <tr>
