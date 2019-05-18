@@ -11,7 +11,7 @@ export default class Crop extends Core {
     }
     private rp() {
         this.in = this.$c(`div`)
-        this.in.style.cssText = `box-shadow:0 0 0 100px #000;font-size:0;overflow:hidden;${this.cfg.circle ? 'border-radius:50%' : ''}`;
+        this.in.style.cssText = `font-size:0;overflow:hidden;${this.cfg.circle ? 'border-radius:50%' : ''}`;
         this.pv.appendChild(this.in)
         const w = this.pv.offsetWidth
         this.pp = { w, h: w / this.vw * this.vh }

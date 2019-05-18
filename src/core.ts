@@ -71,6 +71,7 @@ export default class Crop implements Base {
         keepPP: true,
         isEnd: true,
         quality: 100,
+        type: `png`,
         error: () => { }
     };
     constructor(cfg: Config) {
@@ -134,7 +135,7 @@ export default class Crop implements Base {
     }
     public loadImage(url: string, file?: File) {
         this.img.src = url;
-        this.img.onerror = this.cfg.error.call(null, Ecode.loadFailed)
+        this.img.onerror = () => this.cfg.error(Ecode.loadFailed)
         this.img.onload = () => this.loaded(file)
     }
     private loaded(file: File) {
@@ -207,6 +208,7 @@ export default class Crop implements Base {
         this.mk.style.transform = `translate3d(${left}px,${top}px,0px)`;
     }
     public cropped(): string | Promise<Blob> | void {
+        if (!this.img.src) return this.cfg.error(Ecode.emptyImage)
         const cfg = this.cfg
         let can: HTMLCanvasElement = this.$c('canvas') as HTMLCanvasElement;
         let ctx: CanvasRenderingContext2D = can.getContext('2d');
