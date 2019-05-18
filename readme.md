@@ -16,18 +16,11 @@ canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 <br />
 <br />
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
+| options propety/参数  | explain/说明 |type/类型  | defualt value/默认值 |
+| ------------- | ------------- | ------------- | ------------- |
+| view  |指定图片显示的包裹元素的选择器，可以是类名或者ID或者元素对象.需自行设置素宽高 | string|HTMLElement  | none  |
 <table border="1" cellspacing="0" width="100%" style="table-layout: fixed">
   <tbody align="center">
-    <tr>
-      <td>options propety/参数</td>
-      <td>explain/说明</td>
-      <td>type/类型</td>
-      <td>defualt value/默认值</td>
-    </tr>
     <tr>
       <td>view</td>
       <td>
