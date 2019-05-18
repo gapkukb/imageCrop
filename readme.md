@@ -17,46 +17,10 @@ demo 地址:http://ic.gogogoup.com/<br /><br />
 <br /><br />
 propetys:`除view属性是必填外，其他都为选填`
 <br><br>
-| Left-aligned | Center-aligned | Right-aligned |
-| :---         |     :---:      |          ---: |
-| git status   | git status     | git status    |
-| git diff     | git diff       | git diff      |
-<br>
 
-| 项目        | 价格   |  数量  |
-| --------   | -----:  | :----:  |
-| 计算机      | $1600   |   5     |
-| 手机        |   $12   |   12   |
-| 管线        |    $1    |  234  |
-                    
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell 
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-
-| Function name | Description                    |
-| ------------- | ------------------------------ |
-| `help()`      | Display the help window.       |
-| `destroy()`   | **Destroy your computer!**     |
-
-| Left-Aligned  | Center Aligned  | Right Aligned |
-| :------------ |:---------------:| -----:|
-| col 3 is      | some wordy text | $1600 |
-| col 2 is      | centered        |   $12 |
-| zebra stripes | are neat        |    $1 |
-
-| Item      | Value |
-| --------- | -----:|
-| Computer  | $1600 |
-| Phone     |   $12 |
-| Pipe      |    $1 |
 | 参数 | 说明 | 类型 | 默认值 |
-|:--------------------|:------------:|:---------:|-------------------:|
+| ---- |-----|------|-------|
 | view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
 | preview | 指定图片`预览`显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象，需自行设置元素宽度，`高度`会与 view 元素按比例自动计算 | string &#124; HTMLElement | none |
 | file | 指定 input file 元素，可以是类名或者 ID 或者元素对象 | string &#124; HTMLInputElement | none |
