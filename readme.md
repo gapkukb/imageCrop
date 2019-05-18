@@ -18,9 +18,9 @@ canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 
 | options propety/参数  | explain/说明 |type/类型  | defualt value/默认值 |
 | ------------- | ------------- | ------------- | ------------- |
-| view  |指定图片显示的包裹元素的选择器，可以是类名或者ID或者元素对象.需自行设置素宽高 | string`|`HTMLElement  | none  |
-| preview  |指定图片`预览`显示的包裹元素的选择器，可以是类名或者ID或者元素对象，需自行设置元素宽度，`高度`会与view元素按比例自动计算 | string`|`HTMLElement  | none  |
-| file  |指定input file元素，可以是类名或者ID或者元素对象 | string`|`HTMLInputElement  | none  |
+| view  |指定图片显示的包裹元素的选择器，可以是类名或者ID或者元素对象.需自行设置素宽高 | string&#124;HTMLElement  | none  |
+| preview  |指定图片`预览`显示的包裹元素的选择器，可以是类名或者ID或者元素对象，需自行设置元素宽度，`高度`会与view元素按比例自动计算 | string&#124;HTMLElement  | none  |
+| file  |指定input file元素，可以是类名或者ID或者元素对象 | string&#124;HTMLInputElement  | none  |
 | error  |错误回调函数，返回参数errCode,错误代号如下: 0 - 非图片文件类型， 1 - 文件过大 , 2 - 图片加载失败 ，3 -所选区域是空的(裁剪范围内不能全黑或全白)|function | none  |
 <table border="1" cellspacing="0" width="100%" style="table-layout: fixed">
   <tbody align="center">
