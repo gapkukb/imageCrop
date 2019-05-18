@@ -237,8 +237,8 @@ export default class Crop implements Base {
     }
     export(can: HTMLCanvasElement, cfg: Config): string | Promise<Blob> {
         const e = `image/` + cfg.type, q = cfg.quality / 100
-        if (cfg.blob) return new Promise(resolve => {
-            can.toBlob(blob => resolve(blob), e, q)
+        if (cfg.blob) return new Promise(rs => {
+            can.toBlob(blob => rs(blob), e, q)
         })
         return can.toDataURL(e, q)
     }

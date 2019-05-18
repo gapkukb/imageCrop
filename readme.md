@@ -5,11 +5,11 @@ canvas 为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 <br />
 github 地址：https://github.com/gapkukb/imageCrop<br /><br />
 demo 地址:http://ic.gogogoup.com/<br /><br /><br />
-用法： const crop = new Crop(options) . `除view属性是必填外，其他都为选填`
+
 <br /><br />
 `注意:` dist 文件夹下的 core.js 不包含预览功能，如要要使用预览功能，请使用 preview.js
 <br /><br />
-
+propetys:`除view属性是必填外，其他都为选填`
 | options propety/参数 | explain/说明 | type/类型 | defualt value/默认值 |
 |:--------------------|:------------:|:---------:|:-------------------:|
 | view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
@@ -31,6 +31,11 @@ demo 地址:http://ic.gogogoup.com/<br /><br /><br />
 
 crop 实例方法：<br>
 loadImage(url) 如果需要支持在线图片裁剪，则直接调用该方法即可，需要注意的是可能会有跨域问题，请自行斟酌<br>
-cropped() 导出图片裁剪结果,`发生错误时导出number，当options.blob为true时，导出为promise,否则导出base64`<br>
+cropped() 导出图片裁剪结果,`当options.blob为true时，导出为promise,否则导出base64`<br>
 reset() 重置选取框到初始状态<br>
 clear() 内存回收<br>
+用法： const crop = new Crop(options)<br>
+const result=crop.cropped()<br>
+if(result){
+    ....
+}
