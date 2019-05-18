@@ -11,9 +11,12 @@ canvas为实现方式的在线裁剪图片软件。体积小巧，功能紧致�
 7.支持IE10（含）以上浏览器 <br />
 8.支持AMD,CMD,commonJS,ES6导入<br />
 <br />
+github地址：https://github.com/gapkukb/imageCrop
+demo地址:ip.gogogoup.com
 <br />
 用法： const crop = new Crop(options) . `除view属性是必填外，其他都为选填`
 <br />
+`注意:` dist文件夹下的core.js 不包含预览功能，如要要使用预览功能，请使用preview.js
 <br />
 
 | options propety/参数  | explain/说明 |type/类型  | defualt value/默认值 |
