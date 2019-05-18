@@ -48,6 +48,6 @@ propetys:`除view属性是必填外，其他都为选填`
 
 crop 实例方法：<br>
 loadImage(url) 如果需要支持在线图片裁剪，则直接调用该方法即可，需要注意的是可能会有跨域问题，请自行斟酌<br>
-cropped() 导出图片裁剪结果,`当options.blob为true时，导出为promise,否则导出base64`<br>
+cropped() 导出图片裁剪结果,`当options.blob为true时，导出为promise,否则导出base64,注意判断值是否存在`<br>
 reset() 重置选取框到初始状态<br>
 clear() 内存回收<br>
