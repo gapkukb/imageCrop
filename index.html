@@ -40,9 +40,7 @@
             <input type="file" class="file">
             <button onclick="crop.reset()">重置</button>
             <button onclick="test(crop)">确认裁剪</button>
-            <button onclick="crop.download()">下载</button>
             <button onclick="crop.clear()">销毁实例</button>
-            <input type="range" name="" id="" max="100" min="0" value="70" oninput="crop.scale(this.value)">
         </div>
         <div class="child">
             <div class="view1"></div>
@@ -50,9 +48,7 @@
             <input type="file" class="file1">
             <button onclick="crop1.reset()">重置</button>
             <button onclick="test(crop1)">确认裁剪</button>
-            <button onclick="crop1.download()">下载</button>
             <button onclick="crop1.clear()">销毁实例</button>
-            <input type="range" name="" id="" max="100" min="0" value="70" oninput="crop1.scale(this.value)">
         </div>
     </div>
 
@@ -63,7 +59,8 @@
             preview: ".preview",
             file: '.file',
             keepPP: false,
-            outWidth: 100,
+            isEnd:false,
+            outmax:200,
             error:function(code) {
                 console.log(code)
             }
@@ -73,7 +70,7 @@
             preview: ".preview1",
             quality:10,
             circle: true,
-            outWidth: 100,
+            outsize: 100,
             error:alert
         })
         crop1.loadImage('/test.jpg')

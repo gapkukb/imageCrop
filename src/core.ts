@@ -66,8 +66,7 @@ export default class Crop implements Base {
         maskHeight: '60%',
         minWidth: 100,
         minHeight: 100,
-        outWidth: 0,
-        outHeight: 0,
+        outmax: 0,
         keepPP: true,
         isEnd: true,
         quality: 100,
@@ -213,10 +212,10 @@ export default class Crop implements Base {
         let can: HTMLCanvasElement = this.$c('canvas') as HTMLCanvasElement;
         let ctx: CanvasRenderingContext2D = can.getContext('2d');
         let { w, h, l, t } = this.mp;
-        const outSize = Math.max(cfg.outWidth, cfg.outHeight);
-        const p = Math.min(outSize / w, outSize / h);
-        can.width = outSize > 0 ? w * p : h / this.pmt;
-        can.height = outSize > 0 ? h * p : h / this.pmt;
+        const outsize = this.cfg.outmax;
+        const p = Math.min(outsize / w, outsize / h);
+        can.width = outsize > 0 ? w * p : w / this.pmt;
+        can.height = outsize > 0 ? h * p : h / this.pmt;
         let [cw, ch] = [can.width, can.height]
         if (cfg.type.indexOf('jpeg') !== -1) {
             ctx.fillStyle = `#fff`;
@@ -251,7 +250,9 @@ export default class Crop implements Base {
     public clear() {
         URL['revokeObjectURL'](this.img.src)
         this.img.removeEventListener('load', this.loadpre, false)
-        this.file.onchange =
+        this.file && (this.file.onchange = null)
+        this.cropped =
+            this.reset =
             this.mk[events.begin] =
             events =
             getValueWithBoundary =

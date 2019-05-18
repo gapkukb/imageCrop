@@ -14,8 +14,7 @@ type Config = Partial<{
     maskHeight: string;
     minWidth: number;
     minHeight: number;
-    outWidth: number;
-    outHeight: number;
+    outmax: number;
     keepPP: boolean;
     blob: boolean;
     circle: boolean;
