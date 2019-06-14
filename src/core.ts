@@ -71,7 +71,8 @@ export default class Crop implements Base {
         isEnd: true,
         quality: 100,
         type: `png`,
-        error: () => { }
+        error: () => { },
+        onload: () => { },
     };
     constructor(cfg: Config) {
         this.cfg = { ...this.cfg, ...cfg };
@@ -163,6 +164,7 @@ export default class Crop implements Base {
             }px,0)`;
         this.moveDiv((this.vw - w) / 2, (this.vh - h) / 2)
         this.rsp = { ...this.mp }
+        this.cfg.onload()
     }
     private bindEvt(e: Event): void {
         let x1: number, y1: number

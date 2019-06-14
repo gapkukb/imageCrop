@@ -21,6 +21,7 @@ type Config = Partial<{
     isEnd: boolean;
     quality: number;
     type:string
+    onload:()=>void
 }>;
 type GetImageSizeCallback = (width: number, height: number) => void;
 interface HTMLImageElement {
