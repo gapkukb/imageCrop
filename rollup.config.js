@@ -17,6 +17,7 @@ const factory = file => ({
     }
 })
 export default [
-    factory('core.ts'),
+    // factory('axios.ts'),
+    // factory('core.ts'),
     factory('preview.ts'),
 ];

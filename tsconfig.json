@@ -6,6 +6,7 @@
         "removeComments": true,
         "preserveConstEnums": false,
         "sourceMap": false,
+        // "strictNullChecks": true,
         "lib": [
             "es2015",
             "es5",

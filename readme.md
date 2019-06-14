@@ -27,11 +27,11 @@ propetys:`除view属性是必填外，其他都为选填`
 
 | 参数 | 说明 | 类型 | 默认值 |
 | ---- |-----|------|-------|
-| view | 指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
+| view | `必传`，指定图片显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象.需自行设置素宽高 | string &#124; HTMLElement | none |
 | preview | 指定图片`预览`显示的包裹元素的选择器，可以是类名或者 ID 或者元素对象，需自行设置元素宽度，`高度`会与 view 元素按比例自动计算 | string &#124; HTMLElement | none |
 | file | 指定 input file 元素，可以是类名或者 ID 或者元素对象 | string &#124; HTMLInputElement | none |
 | error | 错误回调函数，返回参数 errCode,错误代号如下: 0 - 非图片文件类型， 1 - 文件过大 , 2 - 图片加载失败 ，3 -所选区域是空的(裁剪范围内不能全黑或全白) | function | none |
-| size | 指定选择图片的最大字节，单位 KB | number | 1024*1024*5 == 5M |
+| size | 指定选择图片的最大字节，单位 KB | number | 1024&#42;1024&#42;5 == 5M |
 | maskWidth | 指定选取框的初始宽度，可以是 px,%,vw,vh,vmax,vmin,pt 任意合法的 CSS 单位 | string | 60% |
 | maskHeight | 指定选取框的初始高度，可以是 px,%,vw,vh,vmax,vmin,pt 任意合法的 CSS 单位 | string | 60% |
 | minWidth | 指定选取框可调整的最小宽度，传入数字即可，会自行添加 px 单位 | number | 100 |
@@ -49,5 +49,6 @@ propetys:`除view属性是必填外，其他都为选填`
 crop 实例方法：<br>
 loadImage(url) 如果需要支持在线图片裁剪，则直接调用该方法即可，需要注意的是可能会有跨域问题，请自行斟酌<br>
 cropped() 导出图片裁剪结果,`当options.blob为true时，导出为promise,否则导出base64,注意判断值是否存在`<br>
-reset() 重置选取框到初始状态<br>
+reset() 选取框和预览重置到初始状态<br>
+resetAll() 调用reset()并清除选取框和图片及预览图<br>
 clear() 内存回收<br>

@@ -11,7 +11,7 @@ export default class Crop extends Core {
     }
     private rp() {
         this.in = this.$c(`div`)
-        this.in.style.cssText = `font-size:0;overflow:hidden;${this.cfg.circle ? 'border-radius:50%' : ''}`;
+        this.in.style.cssText = `visibility:hidden;font-size:0;overflow:hidden;${this.cfg.circle ? 'border-radius:50%' : ''}`;
         this.pv.appendChild(this.in)
         const w = this.pv.offsetWidth
         this.pp = { w, h: w / this.vw * this.vh }
@@ -20,10 +20,16 @@ export default class Crop extends Core {
     }
     loadpre() {
         setTimeout(() => {
-            this.pi = this.img.cloneNode() as HTMLImageElement
-            this.pi.style.transformOrigin = `left top`
-            this.in.appendChild(this.pi)
+            var pi = this.img.cloneNode() as HTMLImageElement
+            pi.style.transformOrigin = `left top`
+            if(this.pi){
+                this.in.replaceChild(pi,this.pi)
+            }else{
+                this.in.appendChild(pi)
+            }
+            this.pi = pi
             this.pc()
+            this.in.style.visibility = ``;
         })
     }
     public pc() {
@@ -32,5 +38,9 @@ export default class Crop extends Core {
         this.in.style.width = this.mp.w + `px`
         this.in.style.height = this.mp.h + `px`
         this.in.style.transform = `scale(${p}) translate3d(${(this.pp.w - this.mp.w) / 2 / p}px,${(this.pp.h - this.mp.h) / 2 / p}px,0)`
+    }
+    public resetAll() {
+        this.reset()
+        this.mk.style.visibility = this.img.style.visibility = this.in.style.visibility=`hidden`;
     }
 }

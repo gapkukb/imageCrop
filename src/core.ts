@@ -101,6 +101,7 @@ export default class Crop implements Base {
         this.img = this.$c(`img`) as HTMLImageElement;
         this.img.draggable = false;
         this.img.crossOrigin = ``
+        this.img.style.visibility = `hidden`
         this.mk.style.cssText = `visibility:hidden;touch-action:none;position: absolute;width:${
             this.cfg.maskWidth
             };height:${this.cfg.maskHeight};left:0;top:0;box-shadow:rgba(0,0,0,.7) 0 0 0 ${this.vw +
@@ -150,6 +151,7 @@ export default class Crop implements Base {
         this.pmt = Math.min(this.vw / nw, this.vh / nh);
         this.img.width = nw * this.pmt;
         this.img.height = nh * this.pmt;
+        this.img.style.visibility=""
         this.ip = {
             l: (this.vw - this.img.width) / 2,
             t: (this.vh - this.img.height) / 2,
@@ -243,9 +245,15 @@ export default class Crop implements Base {
         return can.toDataURL(e, q)
     }
     public reset() {
+        if (!this.rsp)return
         const { w, h, l, t } = this.rsp
         this.moveDiv(l, t)
         this.resizeDiv(w, h)
+        this.pc()
+    }
+    public resetAll(){
+        this.reset()
+        this.mk.style.visibility = this.img.style.visibility=`hidden`;
     }
     public clear() {
         URL['revokeObjectURL'](this.img.src)
